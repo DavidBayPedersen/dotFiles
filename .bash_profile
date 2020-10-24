@@ -45,5 +45,15 @@ function parse_git_dirty {
 		echo ""
 	fi
 }
+# enable color support of ls and also add handy aliases
+    alias ls='ls --color=auto'
+    #alias dir='dir --color=auto'
+    #alias vdir='vdir --color=auto'
+
+    alias grep='grep --color=auto'
+    alias fgrep='fgrep --color=auto'
+    alias egrep='egrep --color=auto'
+
+
 
 export PS1="\[\e[34m\]\u\[\e[m\] [\[\e[32m\]\w\[\e[m\]] \[\e[36m\]\`parse_git_branch\`\[\e[m\] \\$ "

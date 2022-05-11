@@ -13,6 +13,7 @@ set nu
 set nowrap
 set smartcase
 
+
 "install vim-plug if it's not already
 augroup PLUGGED
 	if empty(glob('~/.vim/autoload/plug.vim'))  " Vim
@@ -30,9 +31,9 @@ Plug 'vim-airline/vim-airline'
 Plug 'neoclide/coc.nvim', {'branch': 'release'}
 Plug 'octol/vim-cpp-enhanced-highlight'
 
-"Plug 'SirVer/ultisnips'
+Plug 'SirVer/ultisnips'
 Plug 'honza/vim-snippets'
-"Plug 'lervag/vimtex'
+Plug 'lervag/vimtex'
 
 "Coloring: 
 Plug 'gruvbox-community/gruvbox'
@@ -42,6 +43,18 @@ call plug#end()
 colorscheme gruvbox
 set background=dark
 
+
+"Latex:
+let g:tex_flavor = 'latex'
+let g:vimtex_quickfix_mode=0
+let maplocalleader = ','
+
+let g:UltiSnipsExpandTrigger = '<tab>'
+let g:UltiSnipsJumpForwardTrigger = '<tab>'
+let g:UltiSnipsJumpBackwardTrigger = '<s-tab>'
+
+let g:vimtex_view_general_viewer = 'okular'
+let g:vimtex_view_general_options = '--unique file:@pdf\#src:@line@tex'
 
 
 "Code completing: 
@@ -87,11 +100,33 @@ function! TextEnableCodeSnip(filetype,start,end,textSnipHl) abort
   \ contains=@'.group
 endfunction
 
+function! CaptureAndInsertScreenShot()
+    if(empty($CAPTURE_VIM_SCREENSHOT))
+        "let path = %:~:h/images/
+        let c = trim(system("ls images/ | wc -l"))
+        let $CAPTURE_VIM_SCREENSHOT = c
+    endif
+
+    ! import %:~:h/images/screenshot$CAPTURE_VIM_SCREENSHOT.png
+    let latexFig = ["\\begin{figure}[htp]",
+                \ "\\centering",
+                \ "\\includegraphics[width=0.8\\textwidth]{images/screenshot".$CAPTURE_VIM_SCREENSHOT.".png}",
+                \ "\\caption{}",
+                \ "\\label{fig:}",
+                \ "\\end{figure}"]
+
+    call append(line('.'),latexFig)
+    
+    let $CAPTURE_VIM_SCREENSHOT = $CAPTURE_VIM_SCREENSHOT + 1
+endfunction
+
+
 :command Highlightc call TextEnableCodeSnip(  'c',   'BEGIN_c',   'END_c', 'SpecialComment')
 :command Highlightvhdl call TextEnableCodeSnip(  'vhdl',   'BEGIN_vhdl', 'END_vhdl', 'SpecialComment')
 
-:command TapB ! cd ../TapSystemEmbedded.Skia.Gtk && dotnet run 
+:command TapB !cd ../TapSystemEmbedded.Skia.Gtk && dotnet run 
 
+:command TexScr :call CaptureAndInsertScreenShot() 
 "Snipets 
 "let g:UltiSnipsExpandTrigger=""
 "let g:UltiSnipsJumpForwardTrigger="<C-s>"
@@ -134,8 +169,8 @@ nnoremap <leader>gb <C-t>
 
 
 "To use tab to pick coc popup, as wanted 
-inoremap <Tab> <XDown>
-inoremap <S-Tab> <XUp>
+"inoremap <Tab> <XDown>
+"inoremap <S-Tab> <XUp>
 inoremap <leader><Tab> <Tab>
 
 " Show Documentaion in different window:
